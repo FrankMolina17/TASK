@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'task.dart';
+
 void main() {
   runApp(const TaskFlowApp());
 }
@@ -36,22 +38,6 @@ class TaskFlowApp extends StatelessWidget {
   }
 }
 
-class Task {
-  const Task({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.priority,
-    required this.isCompleted,
-  });
-
-  final int id;
-  final String title;
-  final String description;
-  final String priority;
-  final bool isCompleted;
-}
-
 const demoTasks = [
   Task(
     id: 1,
@@ -60,6 +46,7 @@ const demoTasks = [
         'Mostrar nombre, curso y mensaje motivacional en la primera pantalla',
     priority: 'Alta',
     isCompleted: true,
+    userId: 1,
   ),
   Task(
     id: 2,
@@ -68,6 +55,7 @@ const demoTasks = [
         'Convertir la bienvenida en StatefulWidget y controlar pendientes',
     priority: 'Alta',
     isCompleted: true,
+    userId: 1,
   ),
   Task(
     id: 3,
@@ -75,6 +63,7 @@ const demoTasks = [
     description: 'Modelar Task, extraer TaskCard y usar ListView.builder',
     priority: 'Alta',
     isCompleted: false,
+    userId: 1,
   ),
   Task(
     id: 4,
@@ -82,6 +71,7 @@ const demoTasks = [
     description: 'Usar el id de cada tarea para abrir una pantalla de detalle',
     priority: 'Media',
     isCompleted: false,
+    userId: 1,
   ),
   Task(
     id: 5,
@@ -89,8 +79,16 @@ const demoTasks = [
     description: 'Reemplazar los datos locales por una arquitectura MVVM',
     priority: 'Baja',
     isCompleted: false,
+    userId: 1,
   ),
 ];
+
+Task? findTask(int? id) {
+  for (final task in demoTasks) {
+    if (task.id == id) return task;
+  }
+  return null;
+}
 
 final appRouter = GoRouter(
   routes: [
@@ -98,8 +96,8 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/task/:id',
       builder: (context, state) {
-        final taskId = int.parse(state.pathParameters['id']!);
-        return TaskDetailScreen(taskId: taskId);
+        final id = int.tryParse(state.pathParameters['id'] ?? '');
+        return TaskDetailScreen(task: findTask(id));
       },
     ),
   ],
@@ -181,9 +179,9 @@ class TaskListScreen extends StatelessWidget {
 }
 
 class TaskDetailScreen extends StatelessWidget {
-  const TaskDetailScreen({super.key, required this.taskId});
+  const TaskDetailScreen({super.key, required this.task});
 
-  final int taskId;
+  final Task? task;
 
   Color _priorityColor(String priority) {
     switch (priority) {
@@ -198,7 +196,21 @@ class TaskDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final task = demoTasks.firstWhere((item) => item.id == taskId);
+    final selected = this.task;
+    if (selected == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: TaskFlowPalette.deepTeal,
+          foregroundColor: Colors.white,
+          title: const Text('Detalle de tarea'),
+        ),
+        body: const Padding(
+          padding: EdgeInsets.all(24),
+          child: Text('No se encontró esta tarea.'),
+        ),
+      );
+    }
+    final task = selected;
     final statusLabel = task.isCompleted
         ? 'Estado: completada'
         : 'Estado: pendiente';
@@ -262,6 +274,11 @@ class TaskDetailScreen extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Usuario: ${task.userId}',
+              style: const TextStyle(color: TaskFlowPalette.teal),
             ),
             const SizedBox(height: 20),
             Card(

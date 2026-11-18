@@ -3,21 +3,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:taskflow/main.dart';
 
 void main() {
-  testWidgets('Muestra la pantalla de bienvenida de TaskFlow', (
+  testWidgets('Muestra el listado y navega al detalle', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const TaskFlowApp());
+    await tester.pumpAndSettle();
 
-    expect(find.text('TaskFlow'), findsWidgets);
-    expect(find.text('Aplicaciones Móviles'), findsOneWidget);
-    expect(find.text('Hola, Franklin Molina'), findsOneWidget);
-    expect(
-      find.text(
-        'Bienvenido a TaskFlow. Organiza tus pendientes y avanza el reto final conectado a una API.',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('Tareas pendientes'), findsOneWidget);
-    expect(find.text('7'), findsOneWidget);
+    expect(find.text('Mis tareas'), findsOneWidget);
+    expect(find.text('Personalizar la bienvenida de TaskFlow'), findsOneWidget);
+
+    await tester.tap(find.text('Personalizar la bienvenida de TaskFlow'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Detalle de tarea'), findsOneWidget);
+    expect(find.text('Usuario: 1'), findsOneWidget);
   });
 }
