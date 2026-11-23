@@ -40,8 +40,17 @@ POST /tasks       crear tarea
 PATCH /tasks/:id  actualizar tarea
 DELETE /tasks/:id eliminar tarea
 
-La API concreta se elegirá después. Estas rutas son requisitos, no
-direcciones de un servidor ya conectado.
+### API de tareas
+
+TaskFlow consulta tareas de JSONPlaceholder mediante HTTPS:
+
+- URL base: `https://jsonplaceholder.typicode.com`
+- Endpoint: `GET /todos`
+- Parámetro de filtro: `userId=2` (limita los resultados al usuario 2)
+- Campos que llegan del servidor: `id`, `title`, `completed`, `userId`
+- Valores que TaskFlow completa por defecto: `description` → `'Sin descripción (API)'`, `priority` → `'Sin prioridad (API)'`
+- El campo `completed` del servidor se lee como `isCompleted` del modelo local.
+- Marcar una tarea como completada es solo local: el cambio se guarda en la copia en memoria y se pierde al reiniciar la app.
 
 ## Estructura
 
