@@ -40,7 +40,16 @@ POST /tasks       crear tarea
 PATCH /tasks/:id  actualizar tarea
 DELETE /tasks/:id eliminar tarea
 
-### API de tareas
+## Estados de la lista remota (Sesión 8)
+
+La lista distingue cuatro estados:
+
+- **Carga**: se muestra un indicador circular mientras se espera la respuesta de la API.
+- **Éxito**: se dibuja una tarjeta por cada tarea remota. Se puede actualizar deslizando hacia abajo (pull to refresh) o con el botón de actualizar en la barra.
+- **Vacío**: cuando la API responde con una lista vacía (por ejemplo con `userId=9999`), se muestra el mensaje "Todavía no hay tareas para mostrar." y un botón Actualizar.
+- **Error**: cuando la petición falla (sin internet, timeout, etc.), se muestra el mensaje "No se pudieron cargar las tareas." y un botón Reintentar que vuelve a consultar sin reiniciar la app.
+
+El botón Reintentar solo aparece después de un error; Actualizar aparece cuando la respuesta fue válida pero no contiene tareas.
 
 TaskFlow consulta tareas de JSONPlaceholder mediante HTTPS:
 
