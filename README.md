@@ -61,11 +61,37 @@ TaskFlow consulta tareas de JSONPlaceholder mediante HTTPS:
 - El campo `completed` del servidor se lee como `isCompleted` del modelo local.
 - Marcar una tarea como completada es solo local: el cambio se guarda en la copia en memoria y se pierde al reiniciar la app.
 
+## Formulario de tareas (Sesión 9)
+
+La ruta `/new` abre `TaskFormScreen`, un `StatefulWidget` con un `Form` y un
+`GlobalKey<FormState>`. Guardar llama a `validate()` antes de preparar un
+`TaskDraft` y devolverlo con `context.pop(draft)`.
+
+Validaciones y mensajes personalizados:
+
+- **Título**: obligatorio y con al menos 3 caracteres.
+  - Vacío: `El título no puede estar vacío.`
+  - Corto: `Escribe al menos 3 caracteres en el título.`
+- **Descripción**: obligatoria y con al menos 5 caracteres.
+  - Vacía: `La descripción no puede estar vacía.`
+  - Corta: `Agrega al menos 5 caracteres de descripción.`
+- **Prioridad**: se debe elegir entre `Alta`, `Media` o `Baja`.
+  - Sin elegir: `Selecciona una prioridad.`
+- **Fecha de entrega**: opcional, se elige con `showDatePicker`; se puede
+  guardar sin fecha y se puede quitar con el botón de limpiar.
+
+Los controladores se liberan en `dispose()`. **Guardar no crea un registro
+remoto**: el borrador solo vuelve a la lista, que muestra
+`Formulario válido: <título>`. El botón Cancelar regresa sin mensaje. La sesión
+10 conectará este borrador con `POST /tasks`.
+
 ## Estructura
 
-- `lib/task.dart`: modelo `Task` con constructor, campos y `Task.fromJson`.
-- `lib/main.dart`: lista, detalle y navegación con go_router.
+- `lib/features/tasks/domain/task.dart`: modelo `Task` con `Task.fromJson`.
+- `lib/app/taskflow_app.dart`: lista, detalle, formulario y rutas con go_router.
+- `lib/features/tasks/presentation/task_form_screen.dart`: formulario y `TaskDraft`.
 - `test/widget_test.dart`: prueba de la pantalla de lista.
+- `test/task_form_test.dart`: pruebas de validación, retorno y cancelación.
 
 ## Ejecutar
 
